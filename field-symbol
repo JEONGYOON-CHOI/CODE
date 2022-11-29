@@ -1,0 +1,40 @@
+CASE sy-dynnr.
+    WHEN '0100'.
+      lv_wa   = 'GS_DISP'.
+      lv_itab = 'GT_DISP'.
+      lv_tab  = 'ZFI07410T'.
+    WHEN '0200'.
+      lv_wa   = 'GS_DISP_200'.
+      lv_itab = 'GT_DISP_200'.
+      lv_tab  = 'ZFI07411T'.
+    WHEN '0300'.
+      lv_wa   = 'GS_DISP_300'.
+      lv_itab = 'GT_DISP_300'.
+      lv_tab  = 'ZFI07412T'.
+    WHEN OTHERS.
+  ENDCASE.
+
+  ASSIGN (lv_wa)   TO < wa>.
+  ASSIGN (lv_itab) TO < itab>.
+
+  CREATE DATA lo_table TYPE (lv_tab).
+  ASSIGN lo_table->* TO < tab_wa>.
+
+  CREATE DATA lo_table TYPE TABLE OF (lv_tab).
+  ASSIGN lo_table->* TO < tab>.
+
+  SORT pt_rows BY index DESCENDING.
+  LOOP AT pt_rows INTO ls_row.
+    CLEAR: < wa>.
+    READ TABLE < itab> INTO < wa> INDEX ls_row-index.
+    IF sy-subrc EQ 0.
+      ASSIGN COMPONENT 'FLG_NEW' OF STRUCTURE < wa> TO < val>.
+      IF < val> EQ 'X'.
+        DELETE < itab> INDEX ls_row-index.
+      ELSE.
+        DELETE < itab> INDEX ls_row-index.
+        MOVE-CORRESPONDING < wa> TO < tab_wa>.
+        APPEND < tab_wa> TO < tab>.
+      ENDIF.
+    ENDIF.
+  ENDLOOP.
