@@ -1,0 +1,131 @@
+*&---------------------------------------------------------------------*
+*& Report ZJY_0006
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZJY_0006.
+
+DATA: lv_input(50) TYPE c,
+      lv_otput     LIKE lv_input.
+
+DATA(lo_demo_output) = cl_demo_output=>new( ).
+
+lv_input = ' \\ // _ + * -1,111.22344 ABCDabcd에비씨디'.
+lo_demo_output->next_section( '원본' ).
+lo_demo_output->write( lv_input ).
+
+"글자 숫자 . - 를 제외한 문자 제거
+MOVE lv_input TO lv_otput.
+REPLACE ALL OCCURRENCES OF REGEX '[^[:alnum:]|.|-]' IN lv_otput WITH space.
+lo_demo_output->next_section( '글자 숫자 . - 를 제외한 문자 제거' ).
+lo_demo_output->write( 'REPLACE ALL OCCURRENCES OF REGEX ''[^[:alnum:]|.|-]'' IN LV_INPUT WITH SPACE.' ).
+lo_demo_output->write( lv_otput ).
+
+"String Function 글자 숫자 . - 를 제외한 문자 제거 (String Function은 IN-LINE으로 가능)
+MOVE lv_input TO lv_otput.
+lv_otput = replace( val = lv_input  regex = '[^[:alnum:]|.|-]'  with = space occ = 0 ).
+lo_demo_output->next_section( 'String Function 글자 숫자 . - 를 제외한 문자 제거' ).
+lo_demo_output->write( 'LV_INPUT = REPLACE( VAL = LV_INPUT  REGEX = ''[^[:alnum:]|.|-]''  WITH = SPACE  OCC = 0 ).' ).
+lo_demo_output->write( lv_otput ).
+
+"글자 숫자를 제외한 문자 제거
+MOVE lv_input TO lv_otput.
+REPLACE ALL OCCURRENCES OF REGEX '[^[:alnum:]]' IN lv_otput WITH space.
+lo_demo_output->next_section( '글자 숫자를 제외한 문자 제거' ).
+lo_demo_output->write( 'REPLACE ALL OCCURRENCES OF REGEX ''[^[:alnum:]]'' IN LV_INPUT WITH SPACE.' ).
+lo_demo_output->write( lv_otput ).
+
+"String Function 글자 숫자를 제외한 문자 제거 (String Function은 IN-LINE으로 가능)
+MOVE lv_input TO lv_otput.
+lv_otput = replace( val = lv_input  regex = '[^[:alnum:]]'  with = space  occ = 0 ).
+lo_demo_output->next_section( 'String Function 글자 숫자를 제외한 문자 제거' ).
+lo_demo_output->write( 'LV_INPUT = REPLACE( VAL = LV_INPUT  REGEX = ''[^[:alnum:]]''  WITH = SPACE  OCC = 0 ).' ).
+lo_demo_output->write( lv_otput ).
+
+"숫자를 제외한 문자 제거
+MOVE lv_input TO lv_otput.
+REPLACE ALL OCCURRENCES OF REGEX '[^[:digit:]]' IN lv_otput WITH space.
+lo_demo_output->next_section( '숫자를 제외한 문자 제거' ).
+lo_demo_output->write( 'REPLACE ALL OCCURRENCES OF REGEX ''[^[:digit:]]'' IN LV_INPUT WITH SPACE.' ).
+lo_demo_output->write( lv_otput ).
+
+"String Function 숫자를 제외한 문자 제거 (String Function은 IN-LINE으로 가능)
+MOVE lv_input TO lv_otput.
+lv_otput = replace( val = lv_input  regex = '[^[:digit:]]'  with = space  occ = 0 ).
+lo_demo_output->next_section( 'String Function 숫자를 제외한 문자 제거' ).
+lo_demo_output->write( 'LV_INPUT = REPLACE( VAL = LV_INPUT  REGEX = ''[^[:digit:]]''  WITH = SPACE  OCC = 0 ).' ).
+lo_demo_output->write( lv_otput ).
+
+"숫자 . - 를 제외한 문자 제거
+MOVE lv_input TO lv_otput.
+REPLACE ALL OCCURRENCES OF REGEX '[^[:digit:]|.|-]' IN lv_otput WITH space.
+lo_demo_output->next_section( '숫자 . - 를 제외한 문자 제거' ).
+lo_demo_output->write( 'REPLACE ALL OCCURRENCES OF REGEX ''[^[:digit:]|.|-]'' IN LV_INPUT WITH SPACE.' ).
+lo_demo_output->write( lv_otput ).
+
+"String Function 숫자 . - 를 제외한 문자 제거 (String Function은 IN-LINE으로 가능)
+MOVE lv_input TO lv_otput.
+lv_otput = replace( val = lv_input  regex = '[^[:digit:]|.|-]'  with = space  occ = 0 ).
+lo_demo_output->next_section( 'String Function 숫자 . - 를 제외한 문자 제거' ).
+lo_demo_output->write( 'LV_INPUT = REPLACE( VAL = LV_INPUT  REGEX = ''[^[:digit:]|.|-]''  WITH = SPACE  OCC = 0 ).' ).
+lo_demo_output->write( lv_otput ).
+
+
+"String Function을 이용할 경우 in-line으로 Replace를 하여 문자열 처리 가능
+lo_demo_output->next_section( 'String Function을 이용할 경우 in-line으로 Replace를 하여 문자열 처리 가능' ).
+lo_demo_output->write( '|총 금액 : { CONV BSEG-DMBTR( REPLACE( VAL = LV_INPUT  REGEX = ''[^[:digit:]|.|-]''  WITH = SPACE  OCC = 0 ) ) CURRENCY = ''KRW'' NUMBER = USER }원|.' ).
+lo_demo_output->write( |총 금액 : { CONV bseg-dmbtr( replace( val = lv_input  regex = '[^[:digit:]|.|-]'  with = space  occ = 0 ) ) CURRENCY = 'KRW' NUMBER = USER }원| ).
+
+
+
+lo_demo_output->display( ).
+
+
+*--------------------------------------------------------------------*
+data lv_text(100).
+lv_text = '123전자어음만기1'.
+
+"X
+if lv_text co '전자어음'.
+  write 'co 전자어음'.
+endif.
+"O
+if lv_text ca '전자어음'.
+  write 'ca 전자어음'.
+endif.
+"O
+if lv_text cs '전자어음'.
+  write 'cs 전자어음'.
+endif.
+
+
+data lv_text1(4).
+lv_text1 = '전자어음'.
+"O(타입도 일치해야함)
+if lv_text1 co '전자어음'.
+  write 'co 전자어음'.
+endif.
+"O
+if lv_text1 ca '전자어음'.
+  write 'ca 전자어음'.
+endif.
+"O
+if lv_text1 cs '전자어음'.
+  write 'cs 전자어음'.
+endif.
+
+
+data lv_text2(100).
+lv_text2 = '전z자z어z음z만z기z'.
+"X
+if lv_text2 co '전자어음'.
+  write 'co 전자어음'.
+endif.
+"O
+if lv_text2 ca '전자어음'.
+  write 'ca 전자어음'.
+endif.
+"X
+if lv_text2 cs '전자어음'.
+  write 'cs 전자어음'.
+endif.
